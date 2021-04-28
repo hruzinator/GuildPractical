@@ -24,8 +24,6 @@ function initializeClient() {
 	let screenname = prompt("Enter a screenname: ");
 	//TODO save all in datastore
 
-	//TODO use event listeners instead?
-	// let messageListenerPromise = api.addMessageListener(emitter);
 	return api.start(host, port, screenname);
 
 	// return Promise.all([messageListenerPromise, serverStartPromise]);
@@ -89,19 +87,19 @@ function addPeer() {
 }
 
 async function connectToPeer(peer) {
-	//TODO check that client is online
 	console.log("Now chatting with " + peer.username + ". Type Control+C to quit");
 	//TODO get old messages
-	let message;
-	process.stdout.write("> ");
+	process.stdout.write("\n> ");
 	
 	readline.on("line", input => {
 		process.stdout.write("> ");
-		sendMessage(peer, input);	
+		sendMessage(peer, input).then(response => {
+			//TODO check that client is online
+		});
 	});
 	api.apiEvent.on("receiveMessage", response => {
 		process.stdout.write("\n" + response.timestamp + " " + response.sender + "> " + response.content);
-		process.stdout.write("> ");
+		process.stdout.write("\n> ");
 	});
 }
 
@@ -121,7 +119,6 @@ function sendMessage(peer, message) {
 }
 
 function close() {
-	console.log('close has been called');
 	readline.close();
 	console.log("Thank you for using Piper chat!");
 	process.exit(0);
