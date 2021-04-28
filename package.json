@@ -1,0 +1,25 @@
+{
+  "name": "guildpractical",
+  "version": "1.0.0",
+  "description": "Simple Chat application for Guild Education practical",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongodb": "^3.6.6",
+    "node-fetch": "^2.6.1",
+    "prompt-sync": "^4.2.0"
+  },
+  "devDependencies": {
+    "mocha": "^8.3.2"
+  },
+  "scripts": {
+    "app": "node app.js",
+    "test": "mocha"
+  },
+  "keywords": [
+    "chat"
+  ],
+  "author": "matthew.hruz@gmail.com",
+  "license": "ISC"
+}
