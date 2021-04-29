@@ -18,15 +18,15 @@ app.get('/getStatus', (req, res) => {
 });
 
 app.get('/getMessages/:user', (req, res) => {
-	//collection.deleteMany()
-	//TODO limit 100 and last 30 days
 	MongoClient.connect(mongoUrl, { useUnifiedTopology: true }, (err, dbClient) => {
 		if(err != null) {
 			res.send(500);
 		}
+		let hundredDaysAgo = new Date().getDate()-100;
 		dbClient.db(username + "_client")
 			.collection("messages")
-			.find()
+			.find({"sender": req.params.user, "timestamp": {$gt: hundredDaysAgo}})
+			.limit(100)
 			.toArray()
 			.then(results => res.send(JSON.stringify(results)))
 			.catch(err => res.send(500, err));
