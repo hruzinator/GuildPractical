@@ -1,13 +1,16 @@
 const prompt = require('prompt-sync')();
 const mongo = require('mongodb');
-const http = require('http'); //TODO remove
 const api = require('./api');
 const fetch = require('node-fetch');
+const MongoClient = require('mongodb').MongoClient;
 
 const readline = require('readline').createInterface({
   input: process.stdin,
   output: process.stdout
 });
+
+let screenname;
+const mongoUrl = 'mongodb://localhost:27017';
 
 console.log("Welcome to Piper Chat!");
 
@@ -21,12 +24,10 @@ function initializeClient() {
 	//TODO get these values from datastore if they exist in the datastore
 	let host = prompt("Enter an IP address for your chat server: ");
 	let port = prompt("Enter a port number for your chat server: ");
-	let screenname = prompt("Enter a screenname: ");
+	screenname = prompt("Enter a screenname: ");
 	//TODO save all in datastore
 
 	return api.start(host, port, screenname);
-
-	// return Promise.all([messageListenerPromise, serverStartPromise]);
 }
 
 async function displayPeerMenu() {
@@ -62,9 +63,6 @@ function addPeer() {
 	return fetch(`http://${peerHost}:${peerPort}/getStatus`)
 		.then(response => response.text())
 		.then(username => {
-			console.log(username);
-			//TODO stuck here somewhere => API endpoints do not appear to be alive
-			console.log("inside addPeer");
 			return Promise.resolve({"username" : username, "host" : peerHost, "port" : peerPort});
 		})
 		//TODO save the user in mongodb
@@ -88,29 +86,57 @@ function addPeer() {
 
 async function connectToPeer(peer) {
 	console.log("Now chatting with " + peer.username + ". Type Control+C to quit");
-	//TODO get old messages
-	process.stdout.write("\n> ");
-	
-	readline.on("line", input => {
-		process.stdout.write("> ");
-		sendMessage(peer, input).then(response => {
-			//TODO check that client is online
+	await printOldChatMessages(peer)
+		.then(() => {
+			process.stdout.write("\n> ");
+
+			readline.on("line", input => {
+				process.stdout.write("> ");
+				sendMessage(peer, input).then(response => {
+					//TODO handle offline peer
+				});
+			});
+			api.apiEvent.on("receiveMessage", response => {
+				writeMessageToConsole(response);
+				process.stdout.write("\n> ");
+			});
+		}).catch(console.error);
+}
+
+function printOldChatMessages(peer) {
+	peerMessages = fetch(`http://${peer.host}:${peer.port}/getMessages/${screenname}`)
+		.then(res => res.json());
+	clientMessages = new Promise((resolve, reject) => {
+		mongo.MongoClient.connect(mongoUrl, { useUnifiedTopology: true }, (err, dbClient) => {
+			if(err != null) {
+				reject(err);
+			}
+			let hundredDaysAgo = new Date().getDate()-100;
+			dbClient.db(screenname + "_client")
+				.collection("messages")
+				.find({"sender": peer.username, "timestamp": {$gt: hundredDaysAgo}})
+				.limit(100)
+				.toArray()
+				.then(results => resolve(results));
 		});
 	});
-	api.apiEvent.on("receiveMessage", response => {
-		process.stdout.write("\n" + response.timestamp + " " + response.sender + "> " + response.content);
-		process.stdout.write("\n> ");
-	});
+	return Promise.all([peerMessages, clientMessages]).then((messages) => {
+		messages[0].concat(messages[1]).sort((a, b) => {
+			a.timestamp - b.timestamp;
+		}).forEach(writeMessageToConsole);
+	}).catch(console.error);
+}
+
+function writeMessageToConsole(message) {
+	process.stdout.write("\n" + " " + message.sender + "> " + message.content);
 }
 
 function sendMessage(peer, message) {
 	let body = {
-		sender: peer.username,
-		timestamp: new Date(),
+		sender: screenname,
+		timestamp: new Date().getTime(),
 		content: message
 	}
-
-	//TODO handle if the peer is offline
 	return fetch(`http://${peer.host}:${peer.port}/receiveMessage`, {
 		method: "POST",
 		headers: { 'Content-Type': 'application/json' },

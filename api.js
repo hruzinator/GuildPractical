@@ -21,20 +21,27 @@ app.get('/getMessages/:user', (req, res) => {
 	//collection.deleteMany()
 	//TODO limit 100 and last 30 days
 	MongoClient.connect(mongoUrl, { useUnifiedTopology: true }, (err, dbClient) => {
-		//TODO handle error
-		//TODO this is a cursor object. Need to fish out actual data
+		if(err != null) {
+			res.send(500);
+		}
 		dbClient.db(username + "_client")
 			.collection("messages")
 			.find()
 			.toArray()
-			.then(results => res.send(JSON.stringify(results)));
+			.then(results => res.send(JSON.stringify(results)))
+			.catch(err => res.send(500, err));
 	});
 });
 
 app.post('/receiveMessage', (req, res) => {
-	db.collection("messages").insertOne(req.body);
+	MongoClient.connect(mongoUrl, { useUnifiedTopology: true}, (err, dbClient) => {
+		dbClient.db(username + "_client")
+			.collection("messages")
+			.insertOne(req.body)
+			.catch(console.error);
 	apiEvent.emit("receiveMessage", req.body);
 	res.status(200).send("Message recieved");
+	});
 });
 
 function start(hostname, port, uname) {
@@ -46,6 +53,8 @@ function start(hostname, port, uname) {
 		});
 	});
 }
+
+//TODO externalize database calls to its own function
 
 exports.start = start;
 exports.apiEvent = apiEvent;

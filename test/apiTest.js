@@ -20,7 +20,15 @@ describe("Running API endpoints", function() {
 	});
 
 	describe("/recieveMessage", function() {
+		it("should return messages", function() {
 
+		});
+		it("should filter out messages older than 30 days", function() {
+
+		});
+		it("should limit results to 100 messages", function() {
+
+		});
 	});
 });
 
