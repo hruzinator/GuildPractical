@@ -1,5 +1,4 @@
 const prompt = require('prompt-sync')();
-const mongo = require('mongodb');
 const api = require('./api');
 const fetch = require('node-fetch');
 const MongoClient = require('mongodb').MongoClient;
@@ -107,7 +106,7 @@ function printOldChatMessages(peer) {
 	peerMessages = fetch(`http://${peer.host}:${peer.port}/getMessages/${screenname}`)
 		.then(res => res.json());
 	clientMessages = new Promise((resolve, reject) => {
-		mongo.MongoClient.connect(mongoUrl, { useUnifiedTopology: true }, (err, dbClient) => {
+		MongoClient.connect(mongoUrl, { useUnifiedTopology: true }, (err, dbClient) => {
 			if(err != null) {
 				reject(err);
 			}
