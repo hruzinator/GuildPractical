@@ -14,7 +14,7 @@
   },
   "scripts": {
     "app": "node app.js",
-    "test": "mocha"
+    "test": "mocha --exit --recursive --timeout 5000"
   },
   "keywords": [
     "chat"

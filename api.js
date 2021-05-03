@@ -13,7 +13,6 @@ const mongoUrl = 'mongodb://localhost:27017';
 app.use(express.json());
 
 app.get('/getStatus', (req, res) => {
-	console.log("in getStatus. Username is: " + username);
 	res.status(200).send(username);
 });
 
@@ -22,13 +21,16 @@ app.get('/getMessages/:user', (req, res) => {
 		if(err != null) {
 			res.send(500);
 		}
-		let hundredDaysAgo = new Date().getDate()-100;
+		//subtract one month in Unix time (milliseconds)
+		let thirtyDaysAgo = new Date().getTime() - 2592000000;
+		console.log(dbClient.co);
 		dbClient.db(username + "_client")
 			.collection("messages")
-			.find({"sender": req.params.user, "timestamp": {$gt: hundredDaysAgo}})
+			.find({"sender": req.params.user, "timestamp": {$gt: thirtyDaysAgo}})
 			.limit(100)
 			.toArray()
 			.then(results => res.send(JSON.stringify(results)))
+			.then(dbClient.close)
 			.catch(err => res.send(500, err));
 	});
 });
@@ -39,14 +41,14 @@ app.post('/receiveMessage', (req, res) => {
 			.collection("messages")
 			.insertOne(req.body)
 			.catch(console.error);
-	apiEvent.emit("receiveMessage", req.body);
-	res.status(200).send("Message recieved");
+		apiEvent.emit("receiveMessage", req.body);
+		res.status(200).send("Message recieved");
 	});
 });
 
 function start(hostname, port, uname) {
 	username = uname;
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve, _reject) => {
 		app.listen(port, hostname, () => {
 			console.log(`Chat server listening at http://${hostname}:${port}`);
 			resolve();
