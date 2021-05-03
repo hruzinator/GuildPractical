@@ -55,7 +55,5 @@ function start(hostname, port, uname) {
 	});
 }
 
-//TODO externalize database calls to its own function
-
 exports.start = start;
 exports.apiEvent = apiEvent;

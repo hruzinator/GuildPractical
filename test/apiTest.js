@@ -72,28 +72,6 @@ describe("Running API endpoints", function() {
 		});
 	});
 
-	/*
-	describe("/getMessages", async function() {
-		let messages;
-		this.beforeAll(async function () {
-			messages = await fetch(testUrl + "/getMessages/Alice")
-				.then(response => response.json()).catch(console.error);
-		});
-		it("should return messages sent in the last 30 days", async function() {
-			assert(messages.includes(newPost));
-		});
-		it("should filter out messages older than 30 days", async function() {
-			assert(!messages.includes(oldPost));
-		});
-		it("should limit results to 100 messages", async function() {
-			assert.strictEqual(messages.length, 100);
-		});
-		it("should not include messages from a different user", async function() {
-			assert(!messages.includes(bobPost));
-		});
-	});
-	*/
-
 	describe("/recieveMessage", async function() {
 		let fetchResult;
 		before(async function() {
