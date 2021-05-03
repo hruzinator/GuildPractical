@@ -88,11 +88,14 @@ function printOldChatMessages(peer) {
 				.then(results => resolve(results));
 		});
 	});
-	return Promise.all([peerMessages, clientMessages]).then((messages) => {
-		messages[0].concat(messages[1]).sort((a, b) => {
-			a.timestamp - b.timestamp;
-		}).forEach(writeMessageToConsole);
-	}).catch(console.error);
+	return Promise.all([peerMessages, clientMessages])
+		.then((messages) => {
+			messages[0].concat(messages[1]).sort((a, b) => {
+				return a.timestamp - b.timestamp;
+			}
+			).forEach(writeMessageToConsole);
+		})
+		.catch(console.error);
 }
 
 function writeMessageToConsole(message) {
