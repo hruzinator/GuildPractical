@@ -6,12 +6,12 @@ const api = require('../api');
 describe("Running API endpoints", function() {
 	before(function() {
 		//TODO set up client and peer
-		
+		api.start();
 	});
 	
 	describe("/getStatus", function() {
         it("should be live", function() { 
-            assert.equal(1, 1);
+            
         });
 	});
 
