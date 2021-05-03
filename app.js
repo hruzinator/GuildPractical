@@ -14,46 +14,18 @@ const mongoUrl = 'mongodb://localhost:27017';
 console.log("Welcome to Piper Chat!");
 
 initializeClient()
-	.then(displayPeerMenu)
+	.then(addPeer)
+	.then(connectToPeer)
 	.catch(console.error);
 
 readline.on('SIGINT', () => {close()});
 
 function initializeClient() {
-	//TODO get these values from datastore if they exist in the datastore
 	let host = prompt("Enter an IP address for your chat server: ");
 	let port = prompt("Enter a port number for your chat server: ");
 	screenname = prompt("Enter a screenname: ");
-	//TODO save all in datastore
 
 	return api.start(host, port, screenname);
-}
-
-async function displayPeerMenu() {
-	//TODO loop
-	let peers = [{"username": "hruz", "host": "localhost", "port": "3000"}, 
-	{"username": "test", "host": "localhost", "port": "4000"}]; //TODO fetch all peers from mongoDB
-	console.log("Select a peer to chat with, or enter 0 to create a new peer connection with " 
-		+ "a currently active peer. Type control+C to quit");
-	console.log("0) Create a new peer connection...");
-	for(i=0; i<peers.length; i++) {
-		console.log(i+1 + ") " + peers[i].username);
-	}
-	let selection = prompt("Enter a choice: ");
-	if(selection == "0") {
-		await addPeer()
-			.then(newPeer => {
-				peers.push(newPeer); 
-				return newPeer;
-			})
-			.then(connectToPeer);
-	}
-	else if (selection > 0 && selection <= peers.length) {
-		await connectToPeer(peers[selection-1]);
-	}
-	else {
-		console.log("The option " + selection + " is out of range or is invalid");
-	}
 }
 
 function addPeer() {
@@ -64,9 +36,8 @@ function addPeer() {
 		.then(username => {
 			return Promise.resolve({"username" : username, "host" : peerHost, "port" : peerPort});
 		})
-		//TODO save the user in mongodb
 		.then(peer => {
-			console.log("Added " + peer.username);
+			console.log("Connected with " + peer.username);
 			return Promise.resolve(peer);
 		})
 		.catch((err) => {
@@ -91,9 +62,7 @@ async function connectToPeer(peer) {
 
 			readline.on("line", input => {
 				process.stdout.write("> ");
-				sendMessage(peer, input).then(response => {
-					//TODO handle offline peer
-				});
+				sendMessage(peer, input);
 			});
 			api.apiEvent.on("receiveMessage", response => {
 				writeMessageToConsole(response);

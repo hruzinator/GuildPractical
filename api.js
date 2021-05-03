@@ -23,7 +23,6 @@ app.get('/getMessages/:user', (req, res) => {
 		}
 		//subtract one month in Unix time (milliseconds)
 		let thirtyDaysAgo = new Date().getTime() - 2592000000;
-		console.log(dbClient.co);
 		dbClient.db(username + "_client")
 			.collection("messages")
 			.find({"sender": req.params.user, "timestamp": {$gt: thirtyDaysAgo}})
@@ -31,7 +30,7 @@ app.get('/getMessages/:user', (req, res) => {
 			.toArray()
 			.then(results => res.send(JSON.stringify(results)))
 			.then(dbClient.close)
-			.catch(err => res.send(500, err));
+			.catch(err => res.status(500).send(err));
 	});
 });
 
