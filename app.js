@@ -1,7 +1,7 @@
 const prompt = require('prompt-sync')();
-import { start, apiEvent } from './api';
-import fetch from 'node-fetch';
-import { MongoClient } from 'mongodb';
+const api = require('./api');
+const fetch = require('node-fetch');
+const MongoClient = require('mongodb').MongoClient;
 
 const readline = require('readline').createInterface({
   input: process.stdin,
@@ -25,7 +25,7 @@ function initializeClient() {
 	let port = prompt("Enter a port number for your chat server: ");
 	screenname = prompt("Enter a screenname: ");
 
-	return start(host, port, screenname);
+	return api.start(host, port, screenname);
 }
 
 function addPeer() {
@@ -64,7 +64,7 @@ async function connectToPeer(peer) {
 				process.stdout.write("> ");
 				sendMessage(peer, input);
 			});
-			apiEvent.on("receiveMessage", response => {
+			api.apiEvent.on("receiveMessage", response => {
 				writeMessageToConsole(response);
 				process.stdout.write("\n> ");
 			});
