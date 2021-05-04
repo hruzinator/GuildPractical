@@ -29,7 +29,6 @@ app.get('/getMessages/:user', (req, res) => {
 			.limit(100)
 			.toArray()
 			.then(results => res.send(JSON.stringify(results)))
-			.then(dbClient.close)
 			.catch(err => res.status(500).send(err));
 	});
 });
