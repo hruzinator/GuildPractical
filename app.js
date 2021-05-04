@@ -28,9 +28,14 @@ function initializeClient() {
 	return api.start(host, port, screenname);
 }
 
-function addPeer() {
-	let peerHost = prompt("Enter an IP address for the remote chat user: ");
-	let peerPort = prompt("Enter a port number for the remote chat user: ");
+async function addPeer() {
+	let peerHost = await new Promise((resolve, _reject) => {
+		readline.question("Enter an IP address for the remote chat user: ", resolve);
+	});
+	let peerPort = await new Promise((resolve, _reject) => {
+		readline.question("Enter a port number for the remote chat user: ", resolve);
+	});
+
 	return fetch(`http://${peerHost}:${peerPort}/getStatus`)
 		.then(response => response.text())
 		.then(username => {
@@ -45,12 +50,8 @@ function addPeer() {
 				console.log(`It does not appear that a chat client is running at ${peerHost}:${peerPort}, ` 
 					+ `or there is something preventing you from reaching this connection`);
 				console.log("Check the parameters and try again.");
-				return Promise.reject();
 			}
-			else {
-				console.error(err);
-				return Promise.reject(err);
-			}
+			throw new Error(err);
 		});
 }
 

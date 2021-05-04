@@ -44,4 +44,3 @@ A simple Chat application built with Node.js, using Express.js for routing, Mong
  # Other Points to note
 * Unit tests can be run with `npm test`. 
 * Installing the `mongo` command line utility from your package manager will give you a command line utility to query a running mongodb server.
-* The current version of the client application uses the _prompt\_sync_ library for gathering user input during initialization, which does produce blocking code. As a result, if you are testing the application with two clients, both will need to finish initialization (setting up API server host and port, and the remote peer to connect to) before being brought to the chat screen. This is a known issue that might be fixed if time allows.
