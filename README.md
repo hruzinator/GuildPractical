@@ -6,9 +6,9 @@ A simple Chat application built with Node.js, using Express.js for routing, Mong
 1) Make sure you have Node.js, NPM, Mongodb, git and curl. Many of these utilities can be found with most package managers on *nix systems.
   * Using apt:
   ```bash
-  sudo apt update && sudo apt install mongodb npm curl
+  sudo apt update && sudo apt install mongodb npm curl git
   ```
-  To install node, it is reccomeneded to use the [Node Version Manager](https://github.com/nvm-sh/nvm), or nvm, to manage the version of node for the project. You can check if you have node already by running `node -v`. It is reccomended to user node version 12.16.1 or higher. Install nvm, and the correct version of node, by navigating to the project directory and running:
+  To install node, it is reccomeneded to use the [Node Version Manager](https://github.com/nvm-sh/nvm), or nvm, to manage the version of node for the project. You can check if you have node already by running `node -v`. It is reccomended to user node version 12.16.1 or higher. Install nvm, and the correct version of node, by running:
   
   ```
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
@@ -21,7 +21,7 @@ A simple Chat application built with Node.js, using Express.js for routing, Mong
   * https://nodejs.org/en/download/package-manager/
   * https://github.com/nvm-sh/nvm#installing-and-updating
 
-2) Pull down this repository: `git clone https://github.com/hruzinator/GuildPractical.git`
+2) Pull down this repository: `git clone https://github.com/hruzinator/GuildPractical.git` and navigate into the directory _GuildPractical_
   
 3) Set up the database
 
