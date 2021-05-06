@@ -16,13 +16,13 @@ A simple Chat application built with Node.js, using Express.js for routing, Mong
   nvm install 12.16.1
   nvm use 12.16.1
   ```
-  
-  2) Pull down this repository: `git clone https://github.com/hruzinator/GuildPractical.git`
-  
   Additional help on installation for other package managers and systems:
   * https://docs.mongodb.com/manual/installation/
   * https://nodejs.org/en/download/package-manager/
   * https://github.com/nvm-sh/nvm#installing-and-updating
+
+2) Pull down this repository: `git clone https://github.com/hruzinator/GuildPractical.git`
+  
 3) Set up the database
 
     MongoDB is a file-based datastore, so you will need to define a new, empty directory where can create its database.
